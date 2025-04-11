@@ -8,592 +8,788 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --neon-green: #39ff14;
-            --neon-cyan: #00ffff;
-            --dark-bg: #0a0a0a;
-        }
-        
         body {
             font-family: 'JetBrains Mono', monospace;
-            background-color: var(--dark-bg);
-            color: #e5e7eb;
-            scroll-behavior: smooth;
+            background-color: #0f172a;
+            color: #e2e8f0;
         }
         
-        .terminal-text {
-            color: var(--neon-green);
-            text-shadow: 0 0 5px var(--neon-green);
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #4ade80;
+            animation: blink 1s infinite;
         }
         
-        .command-text {
-            color: var(--neon-cyan);
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .code-block {
+            background-color: #1e293b;
+            border-left: 4px solid #4ade80;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(74, 222, 128, 0.3);
+        }
+        
+        .cert-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+        }
+        
+        .skill-icon:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.8));
         }
         
         .matrix-bg {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
             opacity: 0.1;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="20" font-family="monospace" font-size="12" fill="%2339ff14">0</text><text x="30" y="40" font-family="monospace" font-size="12" fill="%2339ff14">1</text><text x="50" y="60" font-family="monospace" font-size="12" fill="%2339ff14">0</text><text x="70" y="80" font-family="monospace" font-size="12" fill="%2339ff14">1</text></svg>');
-        }
-        
-        .neon-border {
-            border: 1px solid var(--neon-green);
-            box-shadow: 0 0 10px var(--neon-green);
-        }
-        
-        .neon-glow {
-            box-shadow: 0 0 15px var(--neon-cyan);
-        }
-        
-        .neon-glow-green {
-            box-shadow: 0 0 15px var(--neon-green);
-        }
-        
-        .typewriter {
             overflow: hidden;
-            border-right: .15em solid var(--neon-green);
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .15em;
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
         }
         
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--neon-green) }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .aws-region {
-            fill: #232f3e;
-            stroke: #ffffff;
-            transition: all 0.3s ease;
-        }
-        
-        .aws-region:hover {
-            fill: #ff9900;
-            stroke: #ff9900;
-        }
-        
-        .terminal-command::before {
-            content: "$ ";
-            color: var(--neon-green);
-        }
-        
-        .code-block {
-            background-color: #1e1e1e;
-            border-left: 4px solid var(--neon-green);
-            font-family: 'JetBrains Mono', monospace;
-            position: relative;
-        }
-        
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(57, 255, 20, 0.1);
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 2px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .copy-btn:hover {
-            background-color: rgba(57, 255, 20, 0.3);
-        }
-        
-        .tooltip {
-            position: relative;
+        .matrix-column {
             display: inline-block;
+            width: 1em;
+            margin-right: 1em;
+            color: #4ade80;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            animation: fall linear infinite;
         }
         
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: #111;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            border: 1px solid var(--neon-green);
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        .project-card {
-            transition: all 0.3s ease;
-            transform-origin: center;
-        }
-        
-        .project-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-        }
-        
-        .cert-badge {
-            transition: all 0.3s ease;
-        }
-        
-        .cert-badge:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(57, 255, 20, 0.7);
-        }
-        
-        .nav-link {
-            position: relative;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: var(--neon-green);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
+        @keyframes fall {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(100vh); }
         }
     </style>
 </head>
 <body>
-    <div class="matrix-bg"></div>
+    <!-- Matrix Background Animation -->
+    <div class="matrix-bg" id="matrix-bg"></div>
     
     <!-- Navigation -->
-    <nav class="bg-black bg-opacity-80 backdrop-blur-sm fixed w-full z-50 border-b border-gray-800">
+    <nav class="fixed w-full bg-gray-900/80 backdrop-blur-md z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <span class="terminal-text text-xl font-bold">akash@devops:~$</span>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="#home" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_home</a>
-                            <a href="#projects" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_projects</a>
-                            <a href="#skills" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_skills</a>
-                            <a href="#certifications" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_certs</a>
-                            <a href="#blog" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_blog</a>
-                            <a href="#contact" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">_contact</a>
-                        </div>
+                        <span class="text-green-400 font-bold text-xl">$ akash</span>
                     </div>
                 </div>
                 <div class="hidden md:block">
-                    <div class="ml-4 flex items-center md:ml-6">
-                        <a href="#contact" class="neon-border px-4 py-2 rounded-md text-sm font-medium hover:neon-glow-green transition-all duration-300">
-                            <span class="command-text">$ hire_me</span>
-                        </a>
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-green-400 hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium">home</a>
+                        <a href="#projects" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium">projects</a>
+                        <a href="#skills" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium">skills</a>
+                        <a href="#certifications" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium">certs</a>
+                        <a href="#blog" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium">blog</a>
+                        <a href="#contact" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 px-3 py-2 rounded-md text-sm font-medium">contact</a>
                     </div>
                 </div>
-                <div class="-mr-2 flex md:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none" aria-controls="mobile-menu" aria-expanded="false" id="mobile-menu-button">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-300 hover:text-green-400">
+                        <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </div>
         </div>
         
         <!-- Mobile menu -->
-        <div class="md:hidden hidden" id="mobile-menu">
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#home" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_home</a>
-                <a href="#projects" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_projects</a>
-                <a href="#skills" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_skills</a>
-                <a href="#certifications" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_certs</a>
-                <a href="#blog" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_blog</a>
-                <a href="#contact" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">_contact</a>
+                <a href="#home" class="text-green-400 block px-3 py-2 rounded-md text-base font-medium">home</a>
+                <a href="#projects" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 block px-3 py-2 rounded-md text-base font-medium">projects</a>
+                <a href="#skills" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 block px-3 py-2 rounded-md text-base font-medium">skills</a>
+                <a href="#certifications" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 block px-3 py-2 rounded-md text-base font-medium">certs</a>
+                <a href="#blog" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 block px-3 py-2 rounded-md text-base font-medium">blog</a>
+                <a href="#contact" class="text-gray-300 hover:bg-gray-800 hover:text-green-400 block px-3 py-2 rounded-md text-base font-medium">contact</a>
             </div>
         </div>
     </nav>
-    
+
     <!-- Hero Section -->
     <section id="home" class="min-h-screen flex items-center justify-center pt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <div class="terminal-text text-4xl md:text-6xl font-bold mb-6 typewriter">
-                    $ akash sheral
+                <h1 class="text-4xl md:text-6xl font-bold text-green-400 mb-6">
+                    <span class="inline-block">$ akash sheral</span>
+                </h1>
+                <div class="text-xl md:text-2xl text-gray-300 mb-8">
+                    <div id="terminal-text" class="inline-block"></div>
+                    <span class="terminal-cursor"></span>
                 </div>
-                <div class="command-text text-2xl md:text-3xl mb-8">
-                    DevOps Engineer | Cloud Architect | Kubernetes Specialist
-                </div>
-                
-                <div class="max-w-3xl mx-auto bg-black bg-opacity-70 p-6 rounded-lg neon-border mb-12">
-                    <div class="text-left">
-                        <div class="flex items-center mb-4">
-                            <span class="terminal-text">akash@devops:~$</span>
-                            <span class="command-text ml-2 animate-pulse">terraform apply</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
+                    <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-green-400 transition-all">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-certificate"></i>
                         </div>
-                        <div class="text-gray-300 text-sm md:text-base">
-                            <p>Applying infrastructure as code with precision...</p>
-                            <p>AWS Provider: Configured</p>
-                            <p>Kubernetes Cluster: Initializing</p>
-                            <p>CI/CD Pipeline: Optimizing</p>
-                            <p class="terminal-text">Apply complete! Resources: 5 added, 0 changed, 0 destroyed.</p>
+                        <h3 class="text-xl font-bold mb-2">4+ Certifications</h3>
+                        <p class="text-gray-400">Terraform, Kubernetes, AWS, GCP</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-green-400 transition-all">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-project-diagram"></i>
                         </div>
+                        <h3 class="text-xl font-bold mb-2">40% Faster CI/CD</h3>
+                        <p class="text-gray-400">Optimized build pipelines</p>
+                    </div>
+                    <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-green-400 transition-all">
+                        <div class="text-green-400 text-3xl mb-2">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">100% Uptime</h3>
+                        <p class="text-gray-400">HA Kubernetes clusters</p>
                     </div>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    <div class="bg-black bg-opacity-50 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                        <div class="text-4xl font-bold terminal-text mb-2">5+</div>
-                        <div class="text-gray-300">Years Experience</div>
-                    </div>
-                    <div class="bg-black bg-opacity-50 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                        <div class="text-4xl font-bold terminal-text mb-2">40%</div>
-                        <div class="text-gray-300">CI/CD Optimization</div>
-                    </div>
-                    <div class="bg-black bg-opacity-50 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                        <div class="text-4xl font-bold terminal-text mb-2">100+</div>
-                        <div class="text-gray-300">Infrastructure Deployments</div>
-                    </div>
+                <div class="mt-12">
+                    <a href="#contact" class="bg-green-500 hover:bg-green-600 text-gray-900 font-bold py-3 px-8 rounded-md mr-4 transition-all">
+                        Contact Me
+                    </a>
+                    <a href="#projects" class="border border-green-400 text-green-400 hover:bg-green-400/10 font-bold py-3 px-8 rounded-md transition-all">
+                        View Projects
+                    </a>
                 </div>
             </div>
         </div>
     </section>
-    
+
     <!-- Projects Section -->
-    <section id="projects" class="py-20 bg-black bg-opacity-50">
+    <section id="projects" class="py-20 bg-gray-900/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold terminal-text mb-2 text-center">$ cd projects/</h2>
-            <p class="command-text text-xl mb-12 text-center">Explore my recent work and contributions</p>
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-green-400 mb-4">$ cd Projects/</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Hands-on DevOps implementations with measurable impact</p>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Project 1 -->
-                <div class="project-card bg-black bg-opacity-70 rounded-lg overflow-hidden neon-border">
+                <div class="project-card bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all duration-300">
                     <div class="p-6">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold terminal-text mb-2">Kubernetes Cluster Optimization</h3>
-                            <span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">AWS EKS</span>
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-3 rounded-full mr-4">
+                                <i class="fas fa-cubes text-green-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">K8s Cluster Optimization</h3>
                         </div>
-                        <p class="text-gray-300 mb-4">Designed and implemented a highly available Kubernetes cluster with Prometheus/Grafana monitoring stack, achieving 40% reduction in build times.</p>
+                        <p class="text-gray-400 mb-4">High-availability Kubernetes setup with Prometheus/Grafana monitoring that reduced build times by 40%.</p>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Terraform</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Helm</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Prometheus</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Grafana</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Kubernetes</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Prometheus</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Grafana</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">AWS EKS</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-sm command-text hover:underline">View Details →</a>
-                            <a href="#" class="text-sm terminal-text hover:underline">
-                                <i class="fab fa-github mr-1"></i> GitHub
-                            </a>
+                        <div class="code-block p-4 rounded-md mb-4">
+                            <pre class="text-green-400 text-sm overflow-x-auto"><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optimized-app
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0</code></pre>
                         </div>
+                        <a href="#" class="text-green-400 hover:underline flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
                 
                 <!-- Project 2 -->
-                <div class="project-card bg-black bg-opacity-70 rounded-lg overflow-hidden neon-border">
+                <div class="project-card bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all duration-300">
                     <div class="p-6">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold terminal-text mb-2">CI/CD Pipeline Automation</h3>
-                            <span class="bg-blue-900 text-blue-300 text-xs px-2 py-1 rounded">Jenkins</span>
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-3 rounded-full mr-4">
+                                <i class="fas fa-code-branch text-green-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">CI/CD Pipeline Automation</h3>
                         </div>
-                        <p class="text-gray-300 mb-4">Implemented a complete GitOps workflow with Jenkins, ArgoCD and Terraform, reducing deployment times from 15 minutes to under 2 minutes.</p>
+                        <p class="text-gray-400 mb-4">Implemented Jenkins, ArgoCD with Terraform to automate AWS infrastructure provisioning and deployments.</p>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Jenkins</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">ArgoCD</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">GitOps</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">AWS</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Jenkins</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">ArgoCD</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Terraform</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">GitOps</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-sm command-text hover:underline">View Details →</a>
-                            <a href="#" class="text-sm terminal-text hover:underline">
-                                <i class="fab fa-github mr-1"></i> GitHub
-                            </a>
+                        <div class="code-block p-4 rounded-md mb-4">
+                            <pre class="text-green-400 text-sm overflow-x-auto"><code>resource "aws_eks_cluster" "main" {
+  name     = "prod-cluster"
+  role_arn = aws_iam_role.eks.arn
+  vpc_config {
+    subnet_ids = var.subnet_ids
+  }
+}</code></pre>
                         </div>
+                        <a href="#" class="text-green-400 hover:underline flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
                 
                 <!-- Project 3 -->
-                <div class="project-card bg-black bg-opacity-70 rounded-lg overflow-hidden neon-border">
+                <div class="project-card bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition-all duration-300">
                     <div class="p-6">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold terminal-text mb-2">AWS Network Architecture</h3>
-                            <span class="bg-orange-900 text-orange-300 text-xs px-2 py-1 rounded">VPC</span>
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-3 rounded-full mr-4">
+                                <i class="fas fa-network-wired text-green-400 text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">AWS Network Architecture</h3>
                         </div>
-                        <p class="text-gray-300 mb-4">Designed fault-tolerant multi-region AWS architecture with VPC peering, Transit Gateway, and automated failover mechanisms.</p>
+                        <p class="text-gray-400 mb-4">Designed fault-tolerant VPC with multi-AZ deployments, Auto Scaling, and ELB configurations for high availability.</p>
                         <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">CloudFormation</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Terraform</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">AWS</span>
-                            <span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded">Bash</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">AWS VPC</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Auto Scaling</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">ELB</span>
+                            <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Terraform</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <a href="#" class="text-sm command-text hover:underline">View Details →</a>
-                            <a href="#" class="text-sm terminal-text hover:underline">
-                                <i class="fab fa-github mr-1"></i> GitHub
-                            </a>
+                        <div class="code-block p-4 rounded-md mb-4">
+                            <pre class="text-green-400 text-sm overflow-x-auto"><code>module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "3.14.0"
+  
+  name = "prod-vpc"
+  cidr = "10.0.0.0/16"
+  azs  = ["us-east-1a", "us-east-1b"]
+}</code></pre>
                         </div>
+                        <a href="#" class="text-green-400 hover:underline flex items-center">
+                            View Details <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <div class="text-center mt-12">
-                <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md command-text bg-black bg-opacity-70 hover:neon-glow transition-all duration-300 neon-border">
-                    <span>View All Projects</span>
-                    <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+            <div class="text-center mt-16">
+                <a href="#" class="border border-green-400 text-green-400 hover:bg-green-400/10 font-bold py-3 px-8 rounded-md transition-all inline-flex items-center">
+                    View All Projects <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
         </div>
     </section>
-    
+
     <!-- Skills Section -->
     <section id="skills" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold terminal-text mb-2 text-center">$ skills --list</h2>
-            <p class="command-text text-xl mb-12 text-center">My technical toolkit and expertise</p>
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-green-400 mb-4">$ ls Skills/</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Tools and technologies I work with daily</p>
+            </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <!-- Cloud & DevOps -->
-                <div class="bg-black bg-opacity-70 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                    <h3 class="text-xl font-bold terminal-text mb-4 flex items-center">
-                        <i class="fas fa-cloud mr-2"></i> Cloud & DevOps
+                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-green-400 mb-6 flex items-center">
+                        <i class="fas fa-cloud mr-3"></i> Cloud & DevOps
                     </h3>
-                    <div class="space-y-3">
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fab fa-aws text-orange-500 mr-2"></i>
-                                <span>AWS (EC2, S3, EKS, RDS)</span>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-aws"></i>
                             </div>
-                            <span class="tooltiptext">Extensive experience with AWS services including compute, storage, Kubernetes and databases</span>
+                            <span>AWS (EC2, S3, EKS)</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-code text-purple-500 mr-2"></i>
-                                <span>Terraform</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-code"></i>
                             </div>
-                            <span class="tooltiptext">Infrastructure as Code expert with Terraform Certified Associate credential</span>
+                            <span>Terraform</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-ship text-blue-500 mr-2"></i>
-                                <span>Kubernetes</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-docker"></i>
                             </div>
-                            <span class="tooltiptext">Certified Kubernetes Administrator with production cluster management experience</span>
+                            <span>Docker</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fab fa-docker text-blue-300 mr-2"></i>
-                                <span>Docker</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-cubes"></i>
                             </div>
-                            <span class="tooltiptext">Containerization and image optimization for microservices architectures</span>
+                            <span>Kubernetes</span>
                         </div>
                     </div>
                 </div>
                 
                 <!-- CI/CD -->
-                <div class="bg-black bg-opacity-70 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                    <h3 class="text-xl font-bold terminal-text mb-4 flex items-center">
-                        <i class="fas fa-sync-alt text-green-500 mr-2"></i> CI/CD
+                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-green-400 mb-6 flex items-center">
+                        <i class="fas fa-sync-alt mr-3"></i> CI/CD
                     </h3>
-                    <div class="space-y-3">
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fab fa-jenkins text-red-500 mr-2"></i>
-                                <span>Jenkins</span>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-jenkins"></i>
                             </div>
-                            <span class="tooltiptext">Designed and optimized Jenkins pipelines for build automation</span>
+                            <span>Jenkins</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-project-diagram text-purple-300 mr-2"></i>
-                                <span>ArgoCD</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-code-branch"></i>
                             </div>
-                            <span class="tooltiptext">Implemented GitOps workflows with ArgoCD for Kubernetes deployments</span>
+                            <span>ArgoCD</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fab fa-github text-gray-300 mr-2"></i>
-                                <span>GitHub Actions</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-github"></i>
                             </div>
-                            <span class="tooltiptext">Created reusable workflows for automated testing and deployment</span>
+                            <span>GitHub Actions</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-shield-alt text-yellow-500 mr-2"></i>
-                                <span>SonarQube</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-check-circle"></i>
                             </div>
-                            <span class="tooltiptext">Integrated code quality gates into CI pipelines</span>
+                            <span>SonarQube</span>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Monitoring -->
-                <div class="bg-black bg-opacity-70 p-6 rounded-lg neon-border hover:neon-glow transition-all duration-300">
-                    <h3 class="text-xl font-bold terminal-text mb-4 flex items-center">
-                        <i class="fas fa-chart-line text-yellow-500 mr-2"></i> Monitoring
+                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-green-400 mb-6 flex items-center">
+                        <i class="fas fa-chart-line mr-3"></i> Monitoring
                     </h3>
-                    <div class="space-y-3">
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-fire text-orange-500 mr-2"></i>
-                                <span>Prometheus</span>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-fire"></i>
                             </div>
-                            <span class="tooltiptext">Configured custom metrics and alerts for Kubernetes clusters</span>
+                            <span>Prometheus</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-chart-pie text-orange-300 mr-2"></i>
-                                <span>Grafana</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-chart-pie"></i>
                             </div>
-                            <span class="tooltiptext">Built comprehensive dashboards for infrastructure and application monitoring</span>
+                            <span>Grafana</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fab fa-aws text-orange-700 mr-2"></i>
-                                <span>CloudWatch</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-aws"></i>
                             </div>
-                            <span class="tooltiptext">Set up log aggregation and custom metrics in AWS environments</span>
+                            <span>CloudWatch</span>
                         </div>
-                        <div class="tooltip">
-                            <div class="flex items-center">
-                                <i class="fas fa-bell text-red-400 mr-2"></i>
-                                <span>AlertManager</span>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-bell"></i>
                             </div>
-                            <span class="tooltiptext">Configured alert routing and silencing policies</span>
+                            <span>AlertManager</span>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Terminal Command Example -->
-            <div class="mt-12 max-w-4xl mx-auto bg-black bg-opacity-80 p-6 rounded-lg neon-border">
-                <div class="flex items-center mb-4">
-                    <span class="terminal-text">akash@devops:~$</span>
-                    <span class="command-text ml-2">kubectl get pods -n monitoring</span>
-                </div>
-                <div class="text-gray-300 text-sm font-mono overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="text-left border-b border-gray-700">
-                                <th class="pb-2">NAME</th>
-                                <th class="pb-2">READY</th>
-                                <th class="pb-2">STATUS</th>
-                                <th class="pb-2">RESTARTS</th>
-                                <th class="pb-2">AGE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-800">
-                                <td class="py-2">prometheus-server-0</td>
-                                <td>2/2</td>
-                                <td>Running</td>
-                                <td>0</td>
-                                <td>15d</td>
-                            </tr>
-                            <tr class="border-b border-gray-800">
-                                <td class="py-2">grafana-7f8d6c98f5-9q2xv</td>
-                                <td>1/1</td>
-                                <td>Running</td>
-                                <td>0</td>
-                                <td>15d</td>
-                            </tr>
-                            <tr class="border-b border-gray-800">
-                                <td class="py-2">alertmanager-main-0</td>
-                                <td>2/2</td>
-                                <td>Running</td>
-                                <td>0</td>
-                                <td>15d</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2">kube-state-metrics-7d4f8b8b5d-2j5v9</td>
-                                <td>1/1</td>
-                                <td>Running</td>
-                                <td>0</td>
-                                <td>15d</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                
+                <!-- Other -->
+                <div class="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-green-400 mb-6 flex items-center">
+                        <i class="fas fa-tools mr-3"></i> Other
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-python"></i>
+                            </div>
+                            <span>Python</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-linux"></i>
+                            </div>
+                            <span>Linux</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fab fa-git-alt"></i>
+                            </div>
+                            <span>Git</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="skill-icon text-green-400 mr-3 text-xl transition-all">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <span>PostgreSQL</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    
+
     <!-- Certifications Section -->
-    <section id="certifications" class="py-20 bg-black bg-opacity-50">
+    <section id="certifications" class="py-20 bg-gray-900/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold terminal-text mb-2 text-center">$ ls certifications/</h2>
-            <p class="command-text text-xl mb-12 text-center">Validated expertise through industry certifications</p>
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-green-400 mb-4">$ view-certifications</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Validated expertise in cloud and DevOps technologies</p>
+            </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Terraform Associate -->
-                <div class="cert-badge bg-gray-900 rounded-lg overflow-hidden neon-border hover:neon-glow transition-all duration-300">
-                    <div class="p-6">
-                        <div class="flex justify-center mb-4">
-                            <img src="https://www.datocms-assets.com/2885/1620155116-hashicorp-certified-terraform-associate.png" alt="Terraform Associate" class="h-24">
-                        </div>
-                        <h3 class="text-xl font-bold terminal-text text-center mb-2">Terraform Associate</h3>
-                        <p class="text-gray-300 text-center text-sm">HashiCorp</p>
-                        <p class="text-green-400 text-center text-xs mt-2">Valid until: 2025</p>
+                <div class="cert-badge bg-gray-800 rounded-lg p-6 border border-gray-700 text-center transition-all">
+                    <div class="bg-green-400/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-certificate text-green-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">HashiCorp Certified: Terraform Associate</h3>
+                    <p class="text-gray-400 mb-4">Valid until: 2025</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Infrastructure as Code</span>
                     </div>
                 </div>
                 
                 <!-- CKA -->
-                <div class="cert-badge bg-gray-900 rounded-lg overflow-hidden neon-border hover:neon-glow transition-all duration-300">
-                    <div class="p-6">
-                        <div class="flex justify-center mb-4">
-                            <img src="https://d36ai2hkxl16us.cloudfront.net/course-uploads/e0df3f1a-0a9a-4a4a-8b9e-e6a1e5a3fffa/7h3jz1xqg8o9-cka-certified-kubernetes-administrator.png" alt="CKA" class="h-24">
-                        </div>
-                        <h3 class="text-xl font-bold terminal-text text-center mb-2">Certified Kubernetes Administrator</h3>
-                        <p class="text-gray-300 text-center text-sm">CNCF</p>
-                        <p class="text-green-400 text-center text-xs mt-2">Valid until: 2024</p>
+                <div class="cert-badge bg-gray-800 rounded-lg p-6 border border-gray-700 text-center transition-all">
+                    <div class="bg-green-400/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-certificate text-green-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Certified Kubernetes Administrator (CKA)</h3>
+                    <p class="text-gray-400 mb-4">Valid until: 2024</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Kubernetes</span>
                     </div>
                 </div>
                 
                 <!-- AWS Cloud Practitioner -->
-                <div class="cert-badge bg-gray-900 rounded-lg overflow-hidden neon-border hover:neon-glow transition-all duration-300">
-                    <div class="p-6">
-                        <div class="flex justify-center mb-4">
-                            <img src="https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Cloud-Practitioner_badge.634f8a21af2e0e956ed8905a72366146ba22b74c.png" alt="AWS Cloud Practitioner" class="h-24">
-                        </div>
-                        <h3 class="text-xl font-bold terminal-text text-center mb-2">AWS Cloud Practitioner</h3>
-                        <p class="text-gray-300 text-center text-sm">Amazon Web Services</p>
-                        <p class="text-green-400 text-center text-xs mt-2">Valid until: 2025</p>
+                <div class="cert-badge bg-gray-800 rounded-lg p-6 border border-gray-700 text-center transition-all">
+                    <div class="bg-green-400/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-certificate text-green-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">AWS Certified Cloud Practitioner</h3>
+                    <p class="text-gray-400 mb-4">Valid until: 2024</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">AWS</span>
                     </div>
                 </div>
                 
                 <!-- Google Project Management -->
-                <div class="cert-badge bg-gray-900 rounded-lg overflow-hidden neon-border hover:neon-glow transition-all duration-300">
+                <div class="cert-badge bg-gray-800 rounded-lg p-6 border border-gray-700 text-center transition-all">
+                    <div class="bg-green-400/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-certificate text-green-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Google Project Management</h3>
+                    <p class="text-gray-400 mb-4">Valid indefinitely</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-700 text-green-400 text-xs px-3 py-1 rounded-full">Project Management</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-green-400 mb-4">$ cat blog/*.md</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Technical insights and DevOps best practices</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Article 1 -->
+                <div class="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
                     <div class="p-6">
-                        <div class="flex justify-center mb-4">
-                            <img src="https://lh3.googleusercontent.com/pw/AM-JKLXU9j5JYJ0x5Qj2F5V5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5Q5Z5
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-2 rounded-md mr-4">
+                                <i class="fas fa-clock text-green-400"></i>
+                            </div>
+                            <span class="text-sm text-gray-400">10 min read | DevOps</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">Reducing CI/CD Build Times by 40% with Jenkins Optimization</h3>
+                        <p class="text-gray-400 mb-6">Learn how parallel stages, optimized Docker layers, and caching strategies can dramatically improve your pipeline performance.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-green-400 hover:underline flex items-center">
+                                Read Article <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                            <span class="text-xs text-gray-500">Published: 2023-05-15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Article 2 -->
+                <div class="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-2 rounded-md mr-4">
+                                <i class="fas fa-code text-green-400"></i>
+                            </div>
+                            <span class="text-sm text-gray-400">15 min read | Terraform</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">Best Practices for Terraform State Management in AWS</h3>
+                        <p class="text-gray-400 mb-6">Explore remote state backends, state locking, and workspace strategies to maintain IaC reliability at scale.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-green-400 hover:underline flex items-center">
+                                Read Article <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                            <span class="text-xs text-gray-500">Published: 2023-04-22</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Article 3 -->
+                <div class="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-2 rounded-md mr-4">
+                                <i class="fas fa-chart-bar text-green-400"></i>
+                            </div>
+                            <span class="text-sm text-gray-400">12 min read | Kubernetes</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">Monitoring Kubernetes Clusters with Prometheus & Grafana</h3>
+                        <p class="text-gray-400 mb-6">Step-by-step guide to setting up comprehensive monitoring for your K8s clusters with custom dashboards and alerts.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-green-400 hover:underline flex items-center">
+                                Read Article <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                            <span class="text-xs text-gray-500">Published: 2023-03-10</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Article 4 -->
+                <div class="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-400/20 p-2 rounded-md mr-4">
+                                <i class="fas fa-code-branch text-green-400"></i>
+                            </div>
+                            <span class="text-sm text-gray-400">8 min read | GitOps</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">Implementing GitOps with ArgoCD for Kubernetes Deployments</h3>
+                        <p class="text-gray-400 mb-6">How we achieved declarative, version-controlled deployments with automated sync and rollback capabilities.</p>
+                        <div class="flex justify-between items-center">
+                            <a href="#" class="text-green-400 hover:underline flex items-center">
+                                Read Article <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                            <span class="text-xs text-gray-500">Published: 2023-02-28</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-16">
+                <a href="#" class="border border-green-400 text-green-400 hover:bg-green-400/10 font-bold py-3 px-8 rounded-md transition-all inline-flex items-center">
+                    View All Articles <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-green-400 mb-4">$ connect-with-akash</h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">Let's collaborate on your next cloud-native project</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <form class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
+                            <input type="text" id="name" class="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                            <input type="email" id="email" class="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-300 mb-1">Subject</label>
+                            <input type="text" id="subject" class="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="Project Inquiry">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
+                            <textarea id="message" rows="5" class="w-full bg-gray-800 border border-gray-700 rounded-md py-3 px-4 text-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent" placeholder="Tell me about your project..."></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-gray-900 font-bold py-3 px-8 rounded-md transition-all w-full">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div>
+                    <div class="bg-gray-800/50 p-8 rounded-lg border border-gray-700 h-full">
+                        <h3 class="text-xl font-bold text-green-400 mb-6">Contact Information</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="bg-green-400/20 p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fas fa-envelope text-green-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1">Email</h4>
+                                    <a href="mailto:akash@example.com" class="text-gray-400 hover:text-green-400">akash@example.com</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-green-400/20 p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fas fa-phone-alt text-green-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1">Phone</h4>
+                                    <a href="tel:+1234567890" class="text-gray-400 hover:text-green-400">+1 (234) 567-890</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-green-400/20 p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fab fa-linkedin-in text-green-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1">LinkedIn</h4>
+                                    <a href="https://linkedin.com/in/akash-sheral" target="_blank" class="text-gray-400 hover:text-green-400">linkedin.com/in/akash-sheral</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-green-400/20 p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fab fa-github text-green-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold mb-1">GitHub</h4>
+                                    <a href="https://github.com/akash-sheral" target="_blank" class="text-gray-400 hover:text-green-400">github.com/akash-sheral</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-12">
+                            <h3 class="text-xl font-bold text-green-400 mb-6">AWS Regions I've Worked With</h3>
+                            <div class="relative h-64 bg-gray-900 rounded-md overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-b from-green-400/10 to-transparent"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="relative w-full h-full">
+                                        <!-- AWS Region Map Points -->
+                                        <div class="absolute top-1/4 left-1/4 w-3 h-3 bg-green-400 rounded-full animate-pulse" title="us-east-1 (N. Virginia)"></div>
+                                        <div class="absolute top-1/3 left-2/3 w-3 h-3 bg-green-400 rounded-full animate-pulse" title="ap-south-1 (Mumbai)"></div>
+                                        <div class="absolute top-2/3 left-1/3 w-3 h-3 bg-green-400 rounded-full animate-pulse" title="eu-west-1 (Ireland)"></div>
+                                        <div class="absolute top-3/4 left-3/4 w-3 h-3 bg-green-400 rounded-full animate-pulse" title="us-west-2 (Oregon)"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-green-400 font-bold text-xl">$ akash</span>
+                    <p class="text-gray-400 mt-2">DevOps Engineer | Cloud Architect | IaC Specialist</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-green-400">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-green-400">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-green-400">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-green-400">
+                        <i class="fab fa-dev text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>© 2023 Akash Sheral. All rights reserved. Built with Terraform, Kubernetes, and coffee.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Terminal Animation Script -->
+    <script>
+        // Terminal typing animation
+        const terminalText = document.getElementById('terminal-text');
+        const phrases = [
+            "DevOps Engineer",
+            "Terraform Specialist",
+            "Kubernetes Expert",
+            "AWS Architect",
+            "CI/CD Automation"
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let isEnd = false;
+        
+        function typeTerminalText() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                terminalText.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                terminalText.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isEnd = true;
+                setTimeout(() => {
+                    isDeleting = true;
+                }, 2000);
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+            }
+            
+            const typingSpeed = isDeleting ? 100 : 150;
+            const normalSpeed = Math.random() * 100 + typingSpeed;
+            const minSpeed = Math.random() * 50 + 50;
+            setTimeout(typeTerminalText, isEnd ? 1000 : normalSpeed);
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Matrix background
+        function createMatrixBackground() {
+            const matrixBg = document.getElementById('matrix-bg');
+            const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+            
+            for (let i = 0; i < 50; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                column.style.animationDelay = `${Math.random() * 5}s`;
+                
+                for (let j = 0; j < 30; j++) {
+                    const char = document.createElement('span');
+                    char.textContent = chars.charAt(Math.floor(Math.random() * chars.length));
+                    char.style.opacity = Math.random();
+                    column.appendChild(char);
+                }
+                
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            setTimeout(typeTerminalText, 1000);
+            createMatrixBackground();
+        };
+    </script>
+</body>
 </html>
